@@ -2,12 +2,27 @@
  * Trilha Devs — Login
  * Interações de Front-end da tela de login.
  *
- * Importante: este projeto é apenas uma interface de demonstração (UI/UX).
- * Não há Back-end, banco de dados nem autenticação real — nenhum dado
- * digitado é enviado ou armazenado.
+ * IMPORTANTE — SIMULAÇÃO DE AUTENTICAÇÃO
+ * Este projeto é uma interface de demonstração (UI/UX + Front-end).
+ * Não existe Back-end, banco de dados nem autenticação real:
+ * - as credenciais abaixo são PÚBLICAS e exibidas na própria tela;
+ * - a "verificação" acontece apenas no navegador, para demonstrar o fluxo;
+ * - nenhum dado digitado é enviado, salvo ou armazenado.
+ * Em um sistema real, a senha nunca deve ser comparada no Front-end.
  */
 (function () {
   "use strict";
+
+  // Credenciais públicas da demonstração (não são dados de nenhum usuário real)
+  const DEMO_CREDENTIALS = Object.freeze({
+    email: "demo@trilhadevs.com",
+    password: "123456",
+  });
+
+  const MIN_PASSWORD_LENGTH = 6;
+  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const SIMULATED_DELAY_MS = 900;
+  const TOAST_DURATION_MS = 6000;
 
   // ---------- Elementos ----------
   const form = document.getElementById("login-form");
@@ -15,12 +30,14 @@
   const passwordInput = document.getElementById("password");
   const togglePasswordBtn = document.getElementById("toggle-password");
   const submitBtn = document.getElementById("submit-btn");
+  const fillDemoBtn = document.getElementById("fill-demo");
   const createAccountBtn = document.getElementById("create-account");
   const forgotPasswordBtn = document.getElementById("forgot-password");
-  const feedback = document.getElementById("feedback");
-
-  const MIN_PASSWORD_LENGTH = 6;
-  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const loginView = document.getElementById("login-view");
+  const successView = document.getElementById("success-view");
+  const successTitle = document.getElementById("success-title");
+  const logoutBtn = document.getElementById("logout-btn");
+  const toastRegion = document.getElementById("toast-region");
 
   // ---------- Regras de validação ----------
   const validators = {
@@ -38,63 +55,100 @@
     },
   };
 
+  const getValue = (input) => (input.name === "email" ? input.value.trim() : input.value);
+
   /**
    * Valida um campo e atualiza o feedback visual e os atributos de acessibilidade.
    * @param {HTMLInputElement} input
    * @returns {boolean} true se o campo for válido
    */
   function validateField(input) {
-    const value = input.name === "email" ? input.value.trim() : input.value;
-    const message = validators[input.name](value);
-    const field = input.closest(".field");
-    const errorEl = document.getElementById(`${input.id}-error`);
-
-    field.classList.toggle("is-invalid", Boolean(message));
-    field.classList.toggle("is-valid", !message);
-    input.setAttribute("aria-invalid", String(Boolean(message)));
-    errorEl.textContent = message;
-
+    const message = validators[input.name](getValue(input));
+    setFieldState(input, message);
     return !message;
   }
 
-  /** Remove o estado visual de validação de um campo. */
-  function resetField(input) {
+  /** Aplica (ou remove) o estado de erro de um campo. */
+  function setFieldState(input, message) {
     const field = input.closest(".field");
-    field.classList.remove("is-invalid", "is-valid");
+    field.classList.toggle("is-invalid", Boolean(message));
+    field.classList.toggle("is-valid", !message);
+    input.setAttribute("aria-invalid", String(Boolean(message)));
+    document.getElementById(`${input.id}-error`).textContent = message;
+  }
+
+  function resetField(input) {
+    delete input.dataset.authError;
+    input.closest(".field").classList.remove("is-invalid", "is-valid");
     input.removeAttribute("aria-invalid");
     document.getElementById(`${input.id}-error`).textContent = "";
   }
 
-  /**
-   * Exibe uma mensagem na área de feedback.
-   * @param {string} text
-   * @param {"info"|"success"|"error"} type
-   */
-  function showFeedback(text, type = "info") {
-    feedback.hidden = false;
-    feedback.className = `feedback feedback--${type}`;
-    feedback.textContent = text;
-  }
+  // ---------- Toast (mensagens curtas e discretas) ----------
+  const TOAST_ICONS = { info: "i", error: "!", success: "✓" };
 
-  function hideFeedback() {
-    feedback.hidden = true;
-    feedback.textContent = "";
+  /**
+   * Exibe uma notificação curta dentro da tela do app.
+   * @param {{title: string, message: string, type?: "info"|"error"|"success"}} options
+   */
+  function showToast({ title, message, type = "info" }) {
+    // Mantém apenas uma notificação por vez, para não poluir a tela
+    toastRegion.querySelectorAll(".toast").forEach((toast) => toast.remove());
+
+    const toast = document.createElement("div");
+    toast.className = `toast toast--${type}`;
+    toast.innerHTML = `
+      <span class="toast__icon" aria-hidden="true">${TOAST_ICONS[type]}</span>
+      <div class="toast__content">
+        <p class="toast__title"></p>
+        <p class="toast__message"></p>
+      </div>
+      <button type="button" class="toast__close" aria-label="Fechar mensagem">&times;</button>`;
+    // textContent evita interpretar qualquer texto como HTML
+    toast.querySelector(".toast__title").textContent = title;
+    toast.querySelector(".toast__message").textContent = message;
+
+    const close = () => {
+      if (!toast.isConnected || toast.classList.contains("is-leaving")) return;
+      toast.classList.add("is-leaving");
+      toast.addEventListener("animationend", () => toast.remove(), { once: true });
+      window.setTimeout(() => toast.remove(), 400); // garantia caso a animação esteja desativada
+    };
+
+    toast.querySelector(".toast__close").addEventListener("click", close);
+    toastRegion.appendChild(toast);
+    window.setTimeout(close, TOAST_DURATION_MS);
   }
 
   // ---------- Validação em tempo real ----------
   [emailInput, passwordInput].forEach((input) => {
-    // Valida ao sair do campo (se o usuário digitou algo)
     input.addEventListener("blur", () => {
-      if (input.value) validateField(input);
+      // Não apaga a mensagem de "credenciais incorretas" só porque o campo perdeu o foco
+      if (input.value && !input.dataset.authError) validateField(input);
     });
 
-    // Depois de um erro, revalida enquanto o usuário corrige
     input.addEventListener("input", () => {
+      delete input.dataset.authError;
       const field = input.closest(".field");
-      if (field.classList.contains("is-invalid") || field.classList.contains("is-valid")) {
+      if (!input.value) {
+        resetField(input);
+      } else if (field.classList.contains("is-invalid") || field.classList.contains("is-valid")) {
         validateField(input);
       }
-      if (!input.value) resetField(input);
+    });
+  });
+
+  // ---------- Preencher credenciais de demonstração ----------
+  fillDemoBtn.addEventListener("click", () => {
+    emailInput.value = DEMO_CREDENTIALS.email;
+    passwordInput.value = DEMO_CREDENTIALS.password;
+    validateField(emailInput);
+    validateField(passwordInput);
+    submitBtn.focus();
+    showToast({
+      type: "info",
+      title: "Dados preenchidos",
+      message: "Agora é só clicar em Entrar para testar o login de demonstração.",
     });
   });
 
@@ -107,58 +161,96 @@
     passwordInput.focus();
   });
 
-  // ---------- Envio do formulário (simulado) ----------
+  // ---------- Login (SIMULADO) ----------
+  function setLoading(isLoading) {
+    submitBtn.disabled = isLoading;
+    submitBtn.classList.toggle("is-loading", isLoading);
+    submitBtn.querySelector(".btn-primary__label").textContent = isLoading ? "Entrando..." : "Entrar";
+    if (isLoading) submitBtn.setAttribute("aria-busy", "true");
+    else submitBtn.removeAttribute("aria-busy");
+  }
+
+  function shakeForm() {
+    form.classList.remove("is-shaking");
+    void form.offsetWidth; // reinicia a animação
+    form.classList.add("is-shaking");
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    hideFeedback();
+    if (submitBtn.disabled) return;
 
     const isEmailValid = validateField(emailInput);
     const isPasswordValid = validateField(passwordInput);
 
     if (!isEmailValid || !isPasswordValid) {
-      showFeedback("Verifique os campos destacados antes de continuar.", "error");
-      // Leva o foco para o primeiro campo com problema
       (isEmailValid ? passwordInput : emailInput).focus();
+      shakeForm();
       return;
     }
 
-    // Simula o tempo de resposta de um servidor apenas para demonstrar o estado de carregamento
-    submitBtn.disabled = true;
-    submitBtn.classList.add("is-loading");
-    submitBtn.setAttribute("aria-busy", "true");
+    setLoading(true);
 
+    // Simula o tempo de resposta de um servidor (não há requisição de rede)
     window.setTimeout(() => {
-      submitBtn.disabled = false;
-      submitBtn.classList.remove("is-loading");
-      submitBtn.removeAttribute("aria-busy");
-      showFeedback(
-        "Campos validados com sucesso! Esta é uma demonstração Front-end: não existe autenticação real e nenhum dado foi enviado.",
-        "success"
-      );
-    }, 1200);
+      setLoading(false);
+
+      const email = getValue(emailInput).toLowerCase();
+      const isDemoUser =
+        email === DEMO_CREDENTIALS.email && passwordInput.value === DEMO_CREDENTIALS.password;
+
+      if (!isDemoUser) {
+        setFieldState(emailInput, "");
+        setFieldState(passwordInput, "Credenciais de demonstração incorretas.");
+        passwordInput.dataset.authError = "true";
+        shakeForm();
+        passwordInput.focus();
+        passwordInput.select();
+        showToast({
+          type: "error",
+          title: "Credenciais incorretas",
+          message: "Use o acesso de demonstração: demo@trilhadevs.com e senha 123456.",
+        });
+        return;
+      }
+
+      // Sucesso: troca para a tela de boas-vindas
+      toastRegion.innerHTML = "";
+      loginView.hidden = true;
+      successView.hidden = false;
+      successTitle.focus();
+    }, SIMULATED_DELAY_MS);
   });
 
-  // ---------- Links secundários ----------
+  // ---------- Sair da demonstração ----------
+  logoutBtn.addEventListener("click", () => {
+    form.reset();
+    resetField(emailInput);
+    resetField(passwordInput);
+    passwordInput.type = "password";
+    togglePasswordBtn.setAttribute("aria-pressed", "false");
+    togglePasswordBtn.setAttribute("aria-label", "Mostrar senha");
+    successView.hidden = true;
+    loginView.hidden = false;
+    emailInput.focus();
+  });
+
+  // ---------- Funcionalidades demonstrativas ----------
   createAccountBtn.addEventListener("click", () => {
-    showFeedback(
-      "A tela de cadastro faz parte do fluxo planejado no protótipo e ainda não foi implementada nesta versão de demonstração.",
-      "info"
-    );
+    showToast({
+      type: "info",
+      title: "Criar conta",
+      message:
+        "O cadastro faz parte do fluxo planejado no protótipo, mas ainda não possui Back-end implementado.",
+    });
   });
 
   forgotPasswordBtn.addEventListener("click", () => {
-    const email = emailInput.value.trim();
-
-    if (!email || validators.email(email)) {
-      validateField(emailInput);
-      emailInput.focus();
-      showFeedback("Para recuperar a senha, informe primeiro um e-mail válido no campo Email.", "info");
-      return;
-    }
-
-    showFeedback(
-      `Em um sistema real, as instruções de recuperação seriam enviadas para ${email}. Nesta demonstração nenhum e-mail é enviado.`,
-      "info"
-    );
+    showToast({
+      type: "info",
+      title: "Recuperação de senha",
+      message:
+        "A recuperação de senha faz parte do fluxo planejado no protótipo, mas ainda não possui Back-end implementado.",
+    });
   });
 })();
