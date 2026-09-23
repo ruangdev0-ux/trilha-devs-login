@@ -1,30 +1,40 @@
 /* ==========================================================================
    Trilha Devs — Login
-   Estilos baseados no protótipo "Trilha devs" (Figma, frame iPhone 17 - 402x844)
+   Evolução do protótipo "Trilha devs" (Figma, frame iPhone 17 — 402 x 844).
+   Mantém a identidade original (azul #1E3A8A, logo </>, Inter em itálico)
+   com acabamento de aplicativo mobile.
    ========================================================================== */
 
-/* ---------- Tokens extraídos do Figma ---------- */
+/* ---------- Tokens (cores extraídas do Figma + apoio) ---------- */
 :root {
+  /* Identidade original */
   --blue-900: #1e3a8a;          /* cabeçalho, rodapé, botão e "Criar conta" */
   --blue-logo: #0d37a3;         /* fundo do ícone </> */
-  --blue-700: #2748a8;          /* hover */
-  --surface: #d9d9d9;           /* fundo cinza da tela */
-  --input-bg: rgba(119, 119, 119, 0.47);
+  --gray-figma: #d9d9d9;        /* fundo cinza do protótipo */
   --text-strong: #111827;       /* título */
-  --text: #141414;              /* labels e campos */
+
+  /* Apoio */
+  --blue-800: #22409a;
+  --blue-700: #2a4fb8;
+  --blue-50: #eef2fc;
+  --surface: #eceef2;           /* cinza do Figma, levemente clareado */
+  --field-bg: #f8f9fb;
+  --field-border: #737a86;      /* contraste ≥ 3:1 com a superfície */
+  --text: #1f2430;
+  --text-muted: #4b5260;
   --white: #ffffff;
   --error: #b42318;
-  --error-bg: #fde8e7;
-  --success: #106b37;
-  --success-bg: #e3f5ea;
+  --error-bg: #fef1f0;
+  --success: #0f7a3d;
   --focus: #f5b700;             /* anel de foco com alto contraste */
 
-  --radius-device: 40px;
-  --device-width: 402px;
-  --bar-height: 66px;
+  --screen-w: 390px;
+  --screen-h: 844px;
+  --radius-screen: 46px;
+  --radius-phone: 58px;
 
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --shadow-text: 0 4px 4px rgba(0, 0, 0, 0.25);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* ---------- Reset básico ---------- */
@@ -46,6 +56,7 @@ body {
   color: var(--text);
   background: var(--surface);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -62,131 +73,290 @@ button {
   display: none !important;
 }
 
-/* ---------- Estrutura da página ---------- */
-.page {
+/* ==========================================================================
+   MOBILE (padrão): o app ocupa a tela inteira
+   ========================================================================== */
+.stage {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
-/* No mobile o "aparelho" ocupa a tela inteira, como no protótipo */
-.device {
+.phone {
+  flex: 1;
+  display: flex;
+}
+
+/* Botões laterais e barra de status simulada só aparecem na moldura (desktop) */
+.phone__button,
+.status-bar {
+  display: none;
+}
+
+.screen {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   width: 100%;
   background: var(--surface);
+  overflow: hidden;
 }
 
-.device__bar {
-  flex: 0 0 var(--bar-height);
+/* Cabeçalho azul — no Figma era uma faixa com cantos arredondados */
+.app-header {
+  flex: 0 0 auto;
+  height: calc(56px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   background: var(--blue-900);
+  border-radius: 0 0 28px 28px;
+  box-shadow: 0 6px 18px rgba(30, 58, 138, 0.25);
 }
 
-.device__content {
+.screen__body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
-  max-width: var(--device-width);
+  max-width: 430px;
   margin: 0 auto;
-  padding: 28px 20px 32px;
+  padding: 24px 22px 28px;
 }
 
-/* ---------- Logo </> ---------- */
+/* Rodapé azul com indicador de início */
+.app-footer {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  height: calc(40px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--blue-900);
+  border-radius: 28px 28px 0 0;
+}
+
+.home-indicator {
+  width: 134px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------- Marca / logo </> ---------- */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
 .logo {
   display: grid;
   place-items: center;
-  width: 80px;
-  height: 69px;
+  width: 72px;
+  height: 62px;
+  border-radius: 16px;
   background: var(--blue-logo);
+  box-shadow:
+    0 10px 20px rgba(13, 55, 163, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .logo__symbol {
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 900;
   font-style: italic;
   line-height: 1;
   color: #fdfdfd;
-  text-shadow: var(--shadow-text);
+  text-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
   letter-spacing: -0.02em;
+}
+
+.brand__name {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-900);
 }
 
 /* ---------- Título ---------- */
 .title {
-  margin: 40px 0 44px;
-  font-size: clamp(1.625rem, 7vw, 1.875rem); /* 26px → 30px (Figma: 30px) */
+  margin: 18px 0 4px;
+  font-size: 1.75rem;           /* 28px (Figma: 30px) */
   font-weight: 600;
   font-style: italic;
-  color: var(--text-strong);
+  line-height: 1.2;
   text-align: center;
+  color: var(--text-strong);
+}
+
+.subtitle {
+  margin: 0 0 18px;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ---------- Acesso de demonstração ---------- */
+.demo {
+  margin-bottom: 20px;
+  padding: 10px 12px 12px 14px;
+  border: 1px solid rgba(30, 58, 138, 0.22);
+  border-radius: 14px;
+  background: var(--blue-50);
+}
+
+.demo__row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.demo__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--blue-900);
+}
+
+.demo__icon {
+  flex: none;
+}
+
+.demo__list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.demo__list div {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 6px;
+}
+
+.demo__list dt {
+  min-width: 48px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.demo__list dd {
+  margin: 0;
+}
+
+.demo__list code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--white);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  overflow-wrap: anywhere;
+}
+
+.demo__fill {
+  flex: none;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--blue-900);
+  border-radius: 9px;
+  background: var(--white);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--blue-900);
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.demo__fill:hover {
+  background: var(--blue-900);
+  color: var(--white);
 }
 
 /* ---------- Formulário ---------- */
 .form {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .field {
-  margin-bottom: 28px;
+  margin-bottom: 14px;
 }
 
 .field__label {
   display: block;
-  margin-bottom: 12px;
-  font-size: 1.25rem; /* 20px */
-  font-weight: 500;
-  color: var(--text);
+  margin-bottom: 6px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-strong);
 }
 
 .field__control {
   position: relative;
 }
 
+.field__icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
 .field__input {
   display: block;
   width: 100%;
-  height: 44px;
-  padding: 0 16px;
-  border: 2px solid transparent;
-  border-radius: 0;           /* cantos retos, como no protótipo */
-  background: var(--input-bg);
-  font-size: 1.125rem;        /* 18px — evita zoom automático no iOS */
-  font-style: italic;
-  color: var(--text);
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  height: 50px;
+  padding: 0 14px 0 44px;
+  border: 1.5px solid var(--field-border);
+  border-radius: 12px;
+  background: var(--field-bg);
+  font-size: 1rem;              /* 16px evita zoom automático no iOS */
+  color: var(--text-strong);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   -webkit-appearance: none;
   appearance: none;
 }
 
 .field__input::placeholder {
-  color: #3d3d3d;
+  font-style: italic;            /* referência ao texto em itálico do Figma */
+  color: #6b7280;
   opacity: 1;
 }
 
 .field__input--password {
-  padding-right: 52px;        /* espaço para o botão do olho */
-}
-
-/* Senha visível/oculta mantém o estilo do protótipo */
-.field__input--password[type="password"] {
-  letter-spacing: 0.15em;
-  font-style: normal;
+  padding-right: 52px;
 }
 
 .field__input:hover {
-  background: rgba(119, 119, 119, 0.58);
+  border-color: var(--blue-900);
 }
 
 .field__input:focus {
   outline: none;
   border-color: var(--blue-900);
-  background: rgba(255, 255, 255, 0.55);
-  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.25);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.18);
+}
+
+.field__control:focus-within .field__icon {
+  color: var(--blue-900);
 }
 
 /* Estados de validação */
@@ -196,33 +366,42 @@ button {
 }
 
 .field.is-invalid .field__input:focus {
-  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.25);
+  box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.16);
+}
+
+.field.is-invalid .field__icon {
+  color: var(--error);
 }
 
 .field.is-valid .field__input {
   border-color: var(--success);
 }
 
-.field__hint {
-  margin: 8px 0 0;
-  font-size: 0.875rem;
-  color: #3d3d3d;
-}
-
 .field__error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 6px 0 0;
-  min-height: 0;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--error);
 }
 
-.field__error:empty {
-  display: none;
+.field__error::before {
+  content: "!";
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--error);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--white);
 }
 
-/* Quando existe erro, a dica é substituída pela mensagem */
-.field.is-invalid .field__hint {
+.field__error:empty {
   display: none;
 }
 
@@ -230,28 +409,25 @@ button {
 .toggle-password {
   position: absolute;
   top: 50%;
-  right: 6px;
+  right: 5px;
   transform: translateY(-50%);
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 36px;
+  width: 42px;
+  height: 40px;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: 9px;
   background: transparent;
   color: var(--blue-900);
   transition: background-color 0.2s ease;
 }
 
 .toggle-password:hover {
-  background: rgba(30, 58, 138, 0.12);
+  background: rgba(30, 58, 138, 0.1);
 }
 
-.toggle-password .icon--hide {
-  display: none;
-}
-
+.toggle-password .icon--hide,
 .toggle-password[aria-pressed="true"] .icon--show {
   display: none;
 }
@@ -260,45 +436,47 @@ button {
   display: block;
 }
 
-/* ---------- Botão Entrar ---------- */
+/* ---------- Botão principal (Entrar) ---------- */
 .btn-primary {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  min-height: 56px;
-  margin-top: 16px;
+  min-height: 54px;
+  margin-top: 8px;
   border: 0;
+  border-radius: 14px;
   background: var(--blue-900);
   color: var(--white);
-  font-size: clamp(1.875rem, 9vw, 2.25rem); /* 30px → 36px (Figma: 40px) */
-  font-weight: 500;
-  line-height: 1;
-  text-shadow: var(--shadow-text);
-  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 22px rgba(30, 58, 138, 0.3);
+  transition: background-color 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease;
 }
 
 .btn-primary:hover {
-  background: var(--blue-700);
-  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+  background: var(--blue-800);
+  box-shadow: 0 14px 26px rgba(30, 58, 138, 0.36);
 }
 
 .btn-primary:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(0.99);
 }
 
 .btn-primary[disabled] {
   cursor: progress;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .btn-primary__spinner {
   display: none;
-  width: 22px;
-  height: 22px;
-  border: 3px solid rgba(255, 255, 255, 0.4);
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
   border-top-color: var(--white);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -308,10 +486,33 @@ button {
   display: inline-block;
 }
 
+.btn-primary--outline {
+  background: transparent;
+  color: var(--blue-900);
+  border: 1.5px solid var(--blue-900);
+  text-shadow: none;
+  box-shadow: none;
+  font-size: 1.0625rem;
+}
+
+.btn-primary--outline:hover {
+  background: var(--blue-900);
+  color: var(--white);
+  box-shadow: 0 10px 22px rgba(30, 58, 138, 0.25);
+}
+
+/* Formulário "balança" quando as credenciais estão incorretas */
+.form.is-shaking {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 /* ---------- Links "Criar conta" e "Esqueceu sua senha" ---------- */
@@ -319,13 +520,15 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin-top: 30px;
+  gap: 2px;
+  margin-top: 16px;
 }
 
 .link {
-  padding: 4px 8px;
+  min-height: 40px;
+  padding: 4px 10px;
   border: 0;
+  border-radius: 8px;
   background: none;
   font-style: italic;
   text-underline-offset: 4px;
@@ -336,57 +539,199 @@ button {
 }
 
 .link--create {
-  font-size: clamp(1.625rem, 7vw, 1.875rem); /* Figma: 30px */
+  font-size: 1.375rem;
   font-weight: 700;
   color: var(--blue-900);
 }
 
 .link--forgot {
-  font-size: 1.125rem; /* Figma: 18px */
-  font-weight: 300;
-  color: #000;
+  min-height: 32px;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: var(--text);
+}
+
+/* ---------- Tela de sucesso ---------- */
+.view--success {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px 6px;
+  text-align: center;
+  animation: rise 0.45s var(--ease);
+}
+
+.success__badge svg {
+  display: block;
+  filter: drop-shadow(0 10px 18px rgba(15, 122, 61, 0.28));
+}
+
+.success__circle {
+  fill: var(--success);
+  stroke: none;
+  transform-origin: center;
+  animation: pop 0.45s var(--ease) both;
+}
+
+.success__check {
+  fill: none;
+  stroke: var(--white);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: draw 0.4s 0.3s ease forwards;
+}
+
+.success__title {
+  margin: 4px 0 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--text-strong);
+}
+
+.success__title:focus {
+  outline: none;
+}
+
+.success__text {
+  margin: 0 0 8px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@keyframes pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Toast (mensagens discretas) ---------- */
+.toast-region {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(52px + env(safe-area-inset-bottom));
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  max-width: 380px;
+  padding: 12px 10px 12px 12px;
+  border-radius: 14px;
+  background: #1a2233;
+  color: #f3f4f6;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.28);
+  pointer-events: auto;
+  animation: toast-in 0.3s var(--ease);
+}
+
+.toast.is-leaving {
+  animation: toast-out 0.25s ease forwards;
+}
+
+.toast__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #3b5bd6;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--white);
+}
+
+.toast--error .toast__icon {
+  background: #e5484d;
+}
+
+.toast--success .toast__icon {
+  background: #16a34a;
+}
+
+.toast__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast__title {
+  margin: 0 0 2px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.toast__message {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: #d1d5db;
+}
+
+.toast__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  margin: -4px -2px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #d1d5db;
+}
+
+.toast__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes toast-out {
+  to { opacity: 0; transform: translateY(8px); }
 }
 
 /* ---------- Foco visível (navegação por teclado) ---------- */
 .btn-primary:focus-visible,
 .link:focus-visible,
-.toggle-password:focus-visible {
+.toggle-password:focus-visible,
+.demo__fill:focus-visible,
+.toast__close:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
-}
-
-/* ---------- Mensagem de feedback ---------- */
-.feedback {
-  width: 100%;
-  margin-top: 20px;
-  padding: 12px 14px;
-  border-left: 4px solid var(--blue-900);
-  background: rgba(255, 255, 255, 0.7);
-  font-size: 0.9375rem;
-  line-height: 1.45;
-  color: var(--text-strong);
-  animation: fade-in 0.25s ease;
-}
-
-.feedback--success {
-  border-left-color: var(--success);
-  background: var(--success-bg);
-}
-
-.feedback--error {
-  border-left-color: var(--error);
-  background: var(--error-bg);
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 /* ---------- Créditos ---------- */
@@ -396,72 +741,170 @@ button {
   font-size: 0.8125rem;
   line-height: 1.5;
   text-align: center;
-  color: #3d3d3d;
-  background: var(--surface);
+  color: var(--text-muted);
 }
 
 /* ---------- Telas muito estreitas (320px) ---------- */
 @media (max-width: 359px) {
-  .device__content {
-    padding: 24px 16px 28px;
+  .screen__body {
+    padding: 20px 16px 24px;
   }
+
 
   .title {
-    margin: 32px 0 36px;
-  }
-
-  .field__label {
-    font-size: 1.125rem;
+    font-size: 1.5625rem;
   }
 }
 
-/* ---------- Tablet e desktop: o layout mobile vira um "aparelho" centralizado ---------- */
+/* ==========================================================================
+   TABLET E DESKTOP: o app aparece dentro de um smartphone centralizado
+   ========================================================================== */
 @media (min-width: 600px) {
   body {
     background:
-      radial-gradient(circle at 20% 15%, rgba(30, 58, 138, 0.16), transparent 45%),
-      radial-gradient(circle at 80% 85%, rgba(13, 55, 163, 0.14), transparent 45%),
-      #eef1f7;
+      radial-gradient(1200px 600px at 15% 10%, rgba(30, 58, 138, 0.22), transparent 60%),
+      radial-gradient(900px 500px at 85% 90%, rgba(13, 55, 163, 0.18), transparent 60%),
+      linear-gradient(160deg, #e9edf6 0%, #dfe5f2 100%);
   }
 
-  .page {
+  .stage {
     align-items: center;
     justify-content: center;
-    padding: 40px 24px;
-    gap: 20px;
+    gap: 22px;
+    padding: 32px 24px;
   }
 
-  .device {
-    flex: 0 0 auto;
-    width: var(--device-width);
-    min-height: 844px;
-    border-radius: var(--radius-device);
-    overflow: hidden;
+  /* Moldura do aparelho */
+  .phone {
+    position: relative;
+    flex: none;
+    padding: 12px;
+    border-radius: var(--radius-phone);
+    background: linear-gradient(145deg, #2a2f3a 0%, #0f1218 55%, #22262f 100%);
     box-shadow:
-      0 30px 60px rgba(17, 24, 39, 0.18),
-      0 8px 20px rgba(17, 24, 39, 0.1);
+      0 0 0 1.5px #3b404b,
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 40px 80px rgba(17, 24, 39, 0.35),
+      0 12px 28px rgba(17, 24, 39, 0.22);
+  }
+
+  .phone__button {
+    display: block;
+    position: absolute;
+    width: 4px;
+    border-radius: 2px;
+    background: #2b303a;
+  }
+
+  .phone__button--silent { left: -4px; top: 118px; height: 28px; }
+  .phone__button--volume-up { left: -4px; top: 170px; height: 56px; }
+  .phone__button--volume-down { left: -4px; top: 238px; height: 56px; }
+  .phone__button--power { right: -4px; top: 196px; height: 88px; }
+
+  .screen {
+    flex: none;
+    width: var(--screen-w);
+    height: var(--screen-h);
+    border-radius: var(--radius-screen);
+    isolation: isolate;
+  }
+
+  .app-header {
+    height: 96px;
+    padding-top: 0;
+    border-radius: 0 0 30px 30px;
+  }
+
+  /* Barra de status simulada (hora, sinal e bateria) */
+  .status-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 54px;
+    padding: 6px 30px 0 40px;
+    color: var(--white);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .status-bar__island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 120px;
+    height: 34px;
+    border-radius: 20px;
+    background: #05070b;
+    transform: translateX(-50%);
+  }
+
+  .status-bar__icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-bar__icons svg {
+    fill: currentColor;
+  }
+
+  .screen__body {
+    max-width: none;
+    margin-top: -24px;             /* a logo "sobe" levemente sobre o cabeçalho */
+    padding: 0 26px 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .app-footer {
+    height: 34px;
+    padding-bottom: 0;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .toast-region {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 46px;
   }
 
   .credits {
-    max-width: 420px;
+    max-width: 440px;
     padding: 0;
-    background: transparent;
   }
 }
 
-/* Monitores com pouca altura: reduz o espaçamento vertical para caber melhor */
-@media (min-width: 600px) and (max-height: 900px) {
-  .page {
-    padding: 24px;
+/* Na moldura, o cabeçalho abre espaço para a logo sobreposta */
+@media (min-width: 600px) {
+  .logo {
+    position: relative;
+    z-index: 1;
+    border: 4px solid var(--surface);
+    width: 80px;
+    height: 70px;
+    border-radius: 20px;
+    box-sizing: content-box;
   }
+}
 
-  .device {
-    min-height: 0;
-  }
+/* Monitores com pouca altura: reduz o aparelho proporcionalmente */
+@media (min-width: 600px) and (max-height: 940px) {
+  .phone { zoom: 0.9; }
+}
 
-  .title {
-    margin: 28px 0 32px;
-  }
+@media (min-width: 600px) and (max-height: 850px) {
+  .phone { zoom: 0.8; }
+  .stage { padding: 20px 24px; gap: 14px; }
+}
+
+@media (min-width: 600px) and (max-height: 760px) {
+  .phone { zoom: 0.7; }
+}
+
+@media (min-width: 600px) and (max-height: 660px) {
+  .phone { zoom: 0.6; }
 }
 
 /* ---------- Preferência por menos movimento ---------- */
@@ -470,6 +913,11 @@ button {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .success__check {
+    stroke-dashoffset: 0;
   }
 }
