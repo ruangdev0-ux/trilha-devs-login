@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Trilha Devs — tela de login criada no Figma durante o curso de ADS e transformada em interface Front-end com HTML, CSS e JavaScript.">
+  <meta name="author" content="Ruan Gomes">
+  <meta name="theme-color" content="#1e3a8a">
+  <title>Trilha Devs | Login</title>
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <!-- Inter: mesma família tipográfica usada no protótipo do Figma -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="page">
+    <!-- Cartão com o formato mobile do protótipo (iPhone 17 no Figma) -->
+    <section class="device" aria-labelledby="login-title">
+      <header class="device__bar device__bar--top" aria-hidden="true"></header>
+
+      <div class="device__content">
+        <!-- Logo "</>" reconstruída em código (sem imagem exportada) -->
+        <div class="logo" role="img" aria-label="Logo Trilha Devs">
+          <span class="logo__symbol" aria-hidden="true">&lt;/&gt;</span>
+        </div>
+
+        <h1 id="login-title" class="title">Faça Login</h1>
+
+        <form id="login-form" class="form" novalidate>
+          <!-- Campo de e-mail -->
+          <div class="field" data-field="email">
+            <label class="field__label" for="email">Email:</label>
+            <div class="field__control">
+              <input
+                class="field__input"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="alunodev@gmail.com"
+                autocomplete="email"
+                inputmode="email"
+                spellcheck="false"
+                required
+                aria-describedby="email-error">
+            </div>
+            <p class="field__error" id="email-error" aria-live="polite"></p>
+          </div>
+
+          <!-- Campo de senha com botão mostrar/ocultar -->
+          <div class="field" data-field="password">
+            <label class="field__label" for="password">Senha:</label>
+            <div class="field__control">
+              <input
+                class="field__input field__input--password"
+                type="password"
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                minlength="6"
+                required
+                aria-describedby="password-hint password-error">
+              <button
+                type="button"
+                class="toggle-password"
+                id="toggle-password"
+                aria-controls="password"
+                aria-pressed="false"
+                aria-label="Mostrar senha">
+                <!-- Olho aberto -->
+                <svg class="icon icon--show" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+                  <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9Zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z" fill="currentColor"/>
+                </svg>
+                <!-- Olho cortado -->
+                <svg class="icon icon--hide" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+                  <path d="M3.3 2.3 2 3.6l3.1 3.1C3.4 8.1 2.4 10 2 12c1 2.5 5 7 10 7 1.9 0 3.6-.6 5.1-1.5l3.3 3.3 1.3-1.3L3.3 2.3ZM12 16.5A4.5 4.5 0 0 1 7.5 12c0-.8.2-1.5.6-2.2l1.5 1.5a2.5 2.5 0 0 0 3.1 3.1l1.5 1.5c-.7.4-1.4.6-2.2.6Zm0-11.5c-1.3 0-2.6.3-3.7.8l1.6 1.6c.7-.3 1.4-.4 2.1-.4a4.5 4.5 0 0 1 4.5 4.5c0 .7-.1 1.4-.4 2.1l2.6 2.6c1.5-1.2 2.7-2.8 3.3-4.2-1-2.5-5-7-10-7Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <p class="field__hint" id="password-hint">Mínimo de 6 caracteres.</p>
+            <p class="field__error" id="password-error" aria-live="polite"></p>
+          </div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">
+            <span class="btn-primary__label">Entrar</span>
+            <span class="btn-primary__spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div class="links">
+          <button type="button" class="link link--create" id="create-account">Criar conta</button>
+          <button type="button" class="link link--forgot" id="forgot-password">Esqueceu sua senha</button>
+        </div>
+
+        <!-- Mensagens de feedback (lidas por leitores de tela) -->
+        <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+      </div>
+
+      <footer class="device__bar device__bar--bottom" aria-hidden="true"></footer>
+    </section>
+
+    <p class="credits">
+      Protótipo criado no <strong>Figma</strong> por Ruan Gomes (ADS) · Interface Front&#8209;end de demonstração, sem autenticação real.
+    </p>
+  </main>
+
+  <script src="js/script.js" defer></script>
+</body>
+</html>
