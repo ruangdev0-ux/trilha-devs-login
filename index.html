@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Trilha Devs — tela de login criada no Figma durante o curso de ADS e transformada em interface Front-end com HTML, CSS e JavaScript.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Trilha Devs — tela de login criada no Figma durante o curso de ADS e transformada em interface Front-end com HTML, CSS e JavaScript. Inclui acesso de demonstração.">
   <meta name="author" content="Ruan Gomes">
   <meta name="theme-color" content="#1e3a8a">
   <title>Trilha Devs | Login</title>
@@ -13,99 +13,149 @@
   <!-- Inter: mesma família tipográfica usada no protótipo do Figma -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main class="page">
-    <!-- Cartão com o formato mobile do protótipo (iPhone 17 no Figma) -->
-    <section class="device" aria-labelledby="login-title">
-      <header class="device__bar device__bar--top" aria-hidden="true"></header>
+  <main class="stage">
+    <!-- Moldura de smartphone (visível a partir de 600px). No celular, o app ocupa a tela toda. -->
+    <div class="phone">
+      <span class="phone__button phone__button--silent" aria-hidden="true"></span>
+      <span class="phone__button phone__button--volume-up" aria-hidden="true"></span>
+      <span class="phone__button phone__button--volume-down" aria-hidden="true"></span>
+      <span class="phone__button phone__button--power" aria-hidden="true"></span>
 
-      <div class="device__content">
-        <!-- Logo "</>" reconstruída em código (sem imagem exportada) -->
-        <div class="logo" role="img" aria-label="Logo Trilha Devs">
-          <span class="logo__symbol" aria-hidden="true">&lt;/&gt;</span>
-        </div>
-
-        <h1 id="login-title" class="title">Faça Login</h1>
-
-        <form id="login-form" class="form" novalidate>
-          <!-- Campo de e-mail -->
-          <div class="field" data-field="email">
-            <label class="field__label" for="email">Email:</label>
-            <div class="field__control">
-              <input
-                class="field__input"
-                type="email"
-                id="email"
-                name="email"
-                placeholder="alunodev@gmail.com"
-                autocomplete="email"
-                inputmode="email"
-                spellcheck="false"
-                required
-                aria-describedby="email-error">
-            </div>
-            <p class="field__error" id="email-error" aria-live="polite"></p>
+      <section class="screen" aria-labelledby="app-title">
+        <!-- Cabeçalho azul do protótipo, com barra de status simulada -->
+        <header class="app-header">
+          <div class="status-bar" aria-hidden="true">
+            <span class="status-bar__time">9:41</span>
+            <span class="status-bar__island"></span>
+            <span class="status-bar__icons">
+              <svg viewBox="0 0 18 12" width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+              <svg viewBox="0 0 16 12" width="16" height="12"><path d="M8 2.5c2.3 0 4.4.9 6 2.4l1.3-1.4A10.6 10.6 0 0 0 8 .6 10.6 10.6 0 0 0 .7 3.5L2 4.9A8.7 8.7 0 0 1 8 2.5Zm0 3.8c1.3 0 2.5.5 3.4 1.3l1.3-1.4A6.8 6.8 0 0 0 8 4.4c-1.8 0-3.5.7-4.7 1.8l1.3 1.4c.9-.8 2.1-1.3 3.4-1.3Zm0 3.8c-.5 0-1 .2-1.3.5L8 12l1.3-1.4c-.3-.3-.8-.5-1.3-.5Z"/></svg>
+              <svg viewBox="0 0 27 12" width="27" height="12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2"/><rect x="24" y="4" width="2" height="4" rx="1" opacity=".45"/></svg>
+            </span>
           </div>
+        </header>
 
-          <!-- Campo de senha com botão mostrar/ocultar -->
-          <div class="field" data-field="password">
-            <label class="field__label" for="password">Senha:</label>
-            <div class="field__control">
-              <input
-                class="field__input field__input--password"
-                type="password"
-                id="password"
-                name="password"
-                placeholder="••••••••"
-                autocomplete="current-password"
-                minlength="6"
-                required
-                aria-describedby="password-hint password-error">
-              <button
-                type="button"
-                class="toggle-password"
-                id="toggle-password"
-                aria-controls="password"
-                aria-pressed="false"
-                aria-label="Mostrar senha">
-                <!-- Olho aberto -->
-                <svg class="icon icon--show" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-                  <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9Zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z" fill="currentColor"/>
-                </svg>
-                <!-- Olho cortado -->
-                <svg class="icon icon--hide" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-                  <path d="M3.3 2.3 2 3.6l3.1 3.1C3.4 8.1 2.4 10 2 12c1 2.5 5 7 10 7 1.9 0 3.6-.6 5.1-1.5l3.3 3.3 1.3-1.3L3.3 2.3ZM12 16.5A4.5 4.5 0 0 1 7.5 12c0-.8.2-1.5.6-2.2l1.5 1.5a2.5 2.5 0 0 0 3.1 3.1l1.5 1.5c-.7.4-1.4.6-2.2.6Zm0-11.5c-1.3 0-2.6.3-3.7.8l1.6 1.6c.7-.3 1.4-.4 2.1-.4a4.5 4.5 0 0 1 4.5 4.5c0 .7-.1 1.4-.4 2.1l2.6 2.6c1.5-1.2 2.7-2.8 3.3-4.2-1-2.5-5-7-10-7Z" fill="currentColor"/>
-                </svg>
+        <div class="screen__body">
+          <!-- ===== Tela de login ===== -->
+          <div class="view view--login" id="login-view">
+            <div class="brand">
+              <!-- Logo "</>" reconstruída em código (sem imagem exportada) -->
+              <div class="logo" aria-hidden="true">
+                <span class="logo__symbol">&lt;/&gt;</span>
+              </div>
+              <p class="brand__name">Trilha Devs</p>
+            </div>
+
+            <h1 id="app-title" class="title">Faça Login</h1>
+            <p class="subtitle">Acesse sua trilha de estudos em programação.</p>
+
+            <!-- Credenciais públicas para testar a simulação -->
+            <aside class="demo" aria-labelledby="demo-title">
+              <p class="demo__title" id="demo-title">
+                <svg class="demo__icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-6h2v6Zm0-8h-2V7h2v2Z"/></svg>
+                Acesso de demonstração
+              </p>
+              <div class="demo__row">
+                <dl class="demo__list">
+                  <div><dt>E-mail:</dt><dd><code>demo@trilhadevs.com</code></dd></div>
+                  <div><dt>Senha:</dt><dd><code>123456</code></dd></div>
+                </dl>
+                <button type="button" class="demo__fill" id="fill-demo">Preencher dados</button>
+              </div>
+            </aside>
+
+            <form id="login-form" class="form" novalidate>
+              <div class="field" data-field="email">
+                <label class="field__label" for="email">Email</label>
+                <div class="field__control">
+                  <svg class="field__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 2v.4l8 5 8-5V7H4Zm16 2.8-7.5 4.7a1 1 0 0 1-1 0L4 9.8V17h16V9.8Z"/></svg>
+                  <input
+                    class="field__input"
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="alunodev@gmail.com"
+                    autocomplete="username"
+                    inputmode="email"
+                    spellcheck="false"
+                    autocapitalize="off"
+                    required
+                    aria-describedby="email-error">
+                </div>
+                <p class="field__error" id="email-error"></p>
+              </div>
+
+              <div class="field" data-field="password">
+                <label class="field__label" for="password">Senha</label>
+                <div class="field__control">
+                  <svg class="field__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a5 5 0 0 1 5 5v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1V7a5 5 0 0 1 5-5Zm6 10H6v8h12v-8Zm-6 2a1.5 1.5 0 0 1 1 2.6V18h-2v-1.4A1.5 1.5 0 0 1 12 14Zm0-10a3 3 0 0 0-3 3v3h6V7a3 3 0 0 0-3-3Z"/></svg>
+                  <input
+                    class="field__input field__input--password"
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Mínimo de 6 caracteres"
+                    autocomplete="current-password"
+                    minlength="6"
+                    required
+                    aria-describedby="password-error">
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    id="toggle-password"
+                    aria-controls="password"
+                    aria-pressed="false"
+                    aria-label="Mostrar senha">
+                    <svg class="icon icon--show" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7Zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9Zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z" fill="currentColor"/></svg>
+                    <svg class="icon icon--hide" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M3.3 2.3 2 3.6l3.1 3.1C3.4 8.1 2.4 10 2 12c1 2.5 5 7 10 7 1.9 0 3.6-.6 5.1-1.5l3.3 3.3 1.3-1.3L3.3 2.3ZM12 16.5A4.5 4.5 0 0 1 7.5 12c0-.8.2-1.5.6-2.2l1.5 1.5a2.5 2.5 0 0 0 3.1 3.1l1.5 1.5c-.7.4-1.4.6-2.2.6Zm0-11.5c-1.3 0-2.6.3-3.7.8l1.6 1.6c.7-.3 1.4-.4 2.1-.4a4.5 4.5 0 0 1 4.5 4.5c0 .7-.1 1.4-.4 2.1l2.6 2.6c1.5-1.2 2.7-2.8 3.3-4.2-1-2.5-5-7-10-7Z" fill="currentColor"/></svg>
+                  </button>
+                </div>
+                <p class="field__error" id="password-error"></p>
+              </div>
+
+              <button type="submit" class="btn-primary" id="submit-btn">
+                <span class="btn-primary__label">Entrar</span>
+                <span class="btn-primary__spinner" aria-hidden="true"></span>
               </button>
+            </form>
+
+            <div class="links">
+              <button type="button" class="link link--create" id="create-account">Criar conta</button>
+              <button type="button" class="link link--forgot" id="forgot-password">Esqueceu sua senha</button>
             </div>
-            <p class="field__hint" id="password-hint">Mínimo de 6 caracteres.</p>
-            <p class="field__error" id="password-error" aria-live="polite"></p>
           </div>
 
-          <button type="submit" class="btn-primary" id="submit-btn">
-            <span class="btn-primary__label">Entrar</span>
-            <span class="btn-primary__spinner" aria-hidden="true"></span>
-          </button>
-        </form>
-
-        <div class="links">
-          <button type="button" class="link link--create" id="create-account">Criar conta</button>
-          <button type="button" class="link link--forgot" id="forgot-password">Esqueceu sua senha</button>
+          <!-- ===== Tela exibida após o login de demonstração ===== -->
+          <div class="view view--success" id="success-view" hidden>
+            <div class="success__badge" aria-hidden="true">
+              <svg viewBox="0 0 52 52" width="72" height="72"><circle class="success__circle" cx="26" cy="26" r="24"/><path class="success__check" d="M15 27l7 7 15-15"/></svg>
+            </div>
+            <h2 class="success__title" id="success-title" tabindex="-1">Login de demonstração realizado com sucesso!</h2>
+            <p class="success__text">
+              Bem-vindo(a) à <strong>Trilha Devs</strong>. Esta é uma simulação Front-end: não existe
+              autenticação real e nenhum dado foi enviado.
+            </p>
+            <button type="button" class="btn-primary btn-primary--outline" id="logout-btn">Sair da demonstração</button>
+          </div>
         </div>
 
-        <!-- Mensagens de feedback (lidas por leitores de tela) -->
-        <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
-      </div>
+        <!-- Rodapé azul do protótipo com o indicador de início do iPhone -->
+        <footer class="app-footer" aria-hidden="true">
+          <span class="home-indicator"></span>
+        </footer>
 
-      <footer class="device__bar device__bar--bottom" aria-hidden="true"></footer>
-    </section>
+        <!-- Notificações (toast). Lidas por leitores de tela. -->
+        <div class="toast-region" id="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+      </section>
+    </div>
 
     <p class="credits">
-      Protótipo criado no <strong>Figma</strong> por Ruan Gomes (ADS) · Interface Front&#8209;end de demonstração, sem autenticação real.
+      Protótipo criado no <strong>Figma</strong> por Ruan Gomes (ADS) · Interface Front&#8209;end com autenticação apenas simulada.
     </p>
   </main>
 
